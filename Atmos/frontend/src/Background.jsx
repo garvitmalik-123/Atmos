@@ -1,0 +1,67 @@
+import React, { useMemo } from "react";
+
+// Ambient, fixed backdrop shared by every page: gradients, blurred blobs,
+// a faint grid, noise texture and a scatter of twinkling stars.
+const Background = () => {
+  const stars = useMemo(
+    () =>
+      [...Array(50)].map((_, i) => ({
+        id: i,
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 1.6 + 0.6,
+        delay: Math.random() * 4,
+        duration: 2.5 + Math.random() * 3,
+      })),
+    []
+  );
+
+  return (
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-night-deep">
+      {/* base gradient wash */}
+      <div className="absolute inset-0 bg-gradient-to-b from-night-deep via-night to-[#0a0a0d]" />
+
+      {/* radial glow top */}
+      <div className="absolute inset-0 bg-radial-glow" />
+
+      {/* blurred moving blobs */}
+      <div className="absolute -top-40 -left-32 w-[520px] h-[520px] rounded-full bg-brand-violet/25 blur-[120px] animate-blobA" />
+      <div className="absolute top-1/3 -right-40 w-[480px] h-[480px] rounded-full bg-brand-cyan/20 blur-[130px] animate-blobB" />
+      <div className="absolute bottom-0 left-1/4 w-[420px] h-[420px] rounded-full bg-brand-indigo/20 blur-[120px] animate-blobA" style={{ animationDelay: "4s" }} />
+
+      {/* faint grid */}
+      <div className="absolute inset-0 bg-grid-pattern bg-grid-sm [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_40%,transparent_100%)] opacity-40" />
+
+      {/* stars */}
+      <div className="absolute inset-0">
+        {stars.map((s) => (
+          <span
+            key={s.id}
+            className="absolute rounded-full bg-white animate-twinkle"
+            style={{
+              top: `${s.top}%`,
+              left: `${s.left}%`,
+              width: `${s.size}px`,
+              height: `${s.size}px`,
+              animationDelay: `${s.delay}s`,
+              animationDuration: `${s.duration}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* noise texture */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.035] mix-blend-overlay">
+        <filter id="noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)" />
+      </svg>
+
+      {/* vignette */}
+      <div className="absolute inset-0 shadow-[inset_0_0_180px_60px_rgba(0,0,0,0.55)]" />
+    </div>
+  );
+};
+
+export default Background;
